@@ -37,7 +37,7 @@ def start_stripe_subscription(current_user):
                     "price": get_subscription_plan(),
                 },
             ],
-            tritrial_period_days=7,
+            trial_period_days=7,
         )
         current_user.profile.subscription_id = subscription["id"]
         current_user.save()

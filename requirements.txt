@@ -1,2 +1,4 @@
 Django==2.2
 django-registration==3.2
+python-dotenv==0.19.2
+stripe==2.64.0

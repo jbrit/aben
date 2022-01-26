@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <!-- Dashboard -->
+  <div class="mt-5">
+    <h5>Welcome {{user.username}}</h5>
+  </div>
+  <div class="mb-4">
+    View
+    <a href="/customer-portal">Customer Portal</a> here.
+  </div>
+  {% if user.profile.is_subscribed %}
+  <a href="/cancel-subscription" class="btn btn-danger">Cancel Subscription</a>
+  <div class="text-success">Subscribed</div>
+   <div class="text-success">{% if user.profile.subscription_mode == "TRIAL" %}(Trial){% else %}(Full){% endif %}</div>
+{% else %}
+  <a href="/subscribe" class="btn btn-primary">Subscribe</a>{% endif %}
+</div>
+{% endblock %}

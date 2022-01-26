@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from core.models import Profile, StripeEvent, SubscriptionPlan
+
+admin.site.register(Profile)
+admin.site.register(StripeEvent)
+admin.site.register(SubscriptionPlan)

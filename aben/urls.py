@@ -1,24 +1,16 @@
-"""aben URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
+from core.views import cancel_subscription, dashboard, home, logout_view, subscribe,  webhook, customer_portal
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Other URL patterns ...
     path('accounts/', include('django_registration.backends.one_step.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('', home, name='home'),
+    path('logout/', logout_view, name='logout'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('subscribe/', subscribe, name='subscribe'),
+    path('cancel-subscription/', cancel_subscription, name='cancel_subscription'),
+    path('customer-portal/', customer_portal, name='customer_portal'),
+    path('webhook', webhook, name="webhook" )
 ]

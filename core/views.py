@@ -10,11 +10,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from core.models import StripeEvent
-from core.utils import (
-    create_stripe_customer,
-    get_subscription_plan,
-    start_stripe_subscription,
-)
+from core.utils import (create_stripe_customer, get_subscription_plan,
+                        start_stripe_subscription)
 from core.webhook_handlers import _process_subscription_event, _update_product
 
 stripe.api_key = os.environ.get("STRIPE_API_KEY")

@@ -15,27 +15,64 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='StripeEvent',
+            name="StripeEvent",
             fields=[
-                ('id', models.CharField(max_length=100, primary_key=True, serialize=False)),
+                (
+                    "id",
+                    models.CharField(max_length=100, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SubscriptionPlan',
+            name="SubscriptionPlan",
             fields=[
-                ('id', models.CharField(max_length=100, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=30)),
+                (
+                    "id",
+                    models.CharField(max_length=100, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=30)),
             ],
         ),
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subscription_mode', models.CharField(choices=[('FULL', 'Full'), ('TRIAL', 'Trial')], default=None, max_length=5, null=True)),
-                ('subscription_expiry', models.DateTimeField(blank=True, null=True)),
-                ('customer_id', models.CharField(blank=True, max_length=50, null=True)),
-                ('subscription_plan', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.SubscriptionPlan')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "subscription_mode",
+                    models.CharField(
+                        choices=[("FULL", "Full"), ("TRIAL", "Trial")],
+                        default=None,
+                        max_length=5,
+                        null=True,
+                    ),
+                ),
+                ("subscription_expiry", models.DateTimeField(blank=True, null=True)),
+                ("customer_id", models.CharField(blank=True, max_length=50, null=True)),
+                (
+                    "subscription_plan",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="core.SubscriptionPlan",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

@@ -1,18 +1,19 @@
 import os
-import stripe
-from django.shortcuts import render, redirect, resolve_url
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.utils import timezone
 
-from core.models import StripeEvent
+import stripe
+from django.conf import settings
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.shortcuts import redirect, render, resolve_url
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+from core.models import StripeEvent
 from core.utils import (
     create_stripe_customer,
-    start_stripe_subscription,
     get_subscription_plan,
+    start_stripe_subscription,
 )
 from core.webhook_handlers import _process_subscription_event, _update_product
 
@@ -30,9 +31,7 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    context = dict()
-
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard.html")
 
 
 @login_required
@@ -54,8 +53,8 @@ def subscribe(request):
 
         # create checkout session
         session = stripe.checkout.Session.create(
-            success_url="http://localhost:8000/dashboard",
-            cancel_url="http://localhost:8000/dashboard",
+            success_url=f"{settings.SITE_URL}/dashboard",
+            cancel_url=f"{settings.SITE_URL}/dashboard",
             mode="subscription",
             payment_method_types=["card"],
             customer=current_user.profile.customer_id,
@@ -73,10 +72,10 @@ def cancel_subscription(request):
         return HttpResponse("You are not subscribed.")
 
     sub = stripe.Subscription.retrieve(current_user.profile.subscription_id)
-    print(sub)
     if sub["status"] == "canceled":
         return HttpResponse("You are already unsubscribed.")
 
+    # clear stripe and local subscription
     stripe.Subscription.delete(current_user.profile.subscription_id)
     current_user.profile.subscription_expiry = timezone.now()
     current_user.save()
@@ -92,7 +91,7 @@ def customer_portal(request):
 
     session = stripe.billing_portal.Session.create(
         customer=current_user.profile.customer_id,
-        return_url=f"http://localhost:8000/",
+        return_url=settings.SITE_URL,
     )
     return redirect(session.url)
 
@@ -112,7 +111,6 @@ def webhook(request):
     try:
         event = stripe.Webhook.construct_event(payload, received_sig, webhook_secret)
     except ValueError:
-        print("Error while decoding event!")
         return HttpResponse("Bad Payload", status=400)
     except stripe.error.SignatureVerificationError:
         return HttpResponse("Bad Signature", status=400)
@@ -124,7 +122,9 @@ def webhook(request):
             return HttpResponse("Already Processed", status=400)
         except Exception:
             pass
+        # handle webhook event
         webhooks[event["type"]](event)
+        # save event as handled
         event = StripeEvent(id=event_id)
         event.save()
     return HttpResponse("Event processed", 200)

@@ -1,9 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from core.utils import get_subscription_status
 
@@ -35,7 +35,8 @@ class Profile(models.Model):
             and timezone.now() > self.user.profile.subscription_expiry
         )
         active = (
-            status == "active" and timezone.now() > self.user.profile.subscription_expiry
+            status == "active"
+            and timezone.now() > self.user.profile.subscription_expiry
         )
         if trial_mode:
             return self.TRIAL
@@ -43,7 +44,6 @@ class Profile(models.Model):
             return self.FULL
         else:
             return None
-
 
     @property
     def is_subscribed(self):

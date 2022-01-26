@@ -1,9 +1,11 @@
 import stripe
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+
 from core.models import Profile, SubscriptionPlan
 
 
+# set user subscription_mode to stripe subscription type
 def update_mode(user, event):
     if event["data"]["object"]["status"] == "trialing":
         user.profile.subscription_mode = Profile.TRIAL
@@ -11,6 +13,7 @@ def update_mode(user, event):
         user.profile.subscription_mode = Profile.FULL
     else:
         user.profile.subscription_mode = None
+
 
 def _process_subscription_event(event):
     user = get_object_or_404(
@@ -29,9 +32,10 @@ def _process_subscription_event(event):
 
     user.profile.subscription_plan = get_object_or_404(SubscriptionPlan, pk=plan_id)
 
+    # Only update id if the subscription update is not deletion
     if event["type"] != "customer.subscription.deleted":
         user.profile.subscription_id = event["data"]["object"]["id"]
-    
+
     update_mode(user, event)
 
     user.save()
